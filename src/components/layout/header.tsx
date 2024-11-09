@@ -4,7 +4,7 @@ import MobileMenu from "./mobile-menu";
 
 export default function Header() {
   return (
-    <header className="main-wrapper min-h-header bg-background text-white border-b border-solid border-zinc-500/40">
+    <header className="w-full main-wrapper min-h-header bg-background text-white border-b border-solid border-zinc-500/40">
       <div className="main-inner-wrapper flex items-center">
         <div className="basis-1/3">
           <div

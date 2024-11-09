@@ -9,6 +9,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      screens: {
+        "2md": "900px",
+        "2lg": "1100px",
+      },
       height: {
         header: "var(--header-height)",
         categories: "var(--categories-height)",

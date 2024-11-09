@@ -33,8 +33,16 @@ export default function RootLayout({
         >
           <ReactQueryProvider>
             <SolanaProvider>
-              <Header />
-              {children}
+              <div className="flex justify-center bg-background">
+                <div className="max-w-[1800px] flex w-full">
+                  <aside className="w-60 xl:w-72 shrink-0 bg-background border-r border-solid border-zinc-500/40 hidden sm:block"></aside>
+                  <div className="w-full flex flex-col items-center h-svh gradient-1">
+                    <Header />
+                    {children}
+                  </div>
+                  <aside className="w-60 xl:w-72 shrink-0 bg-background border-l border-solid border-zinc-500/40 hidden 2md:block"></aside>
+                </div>
+              </div>
             </SolanaProvider>
           </ReactQueryProvider>
         </ThemeProvider>
