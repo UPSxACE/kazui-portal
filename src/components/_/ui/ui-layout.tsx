@@ -1,10 +1,9 @@
-'use client'
+"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode, Suspense, useEffect, useRef } from "react";
 import toast, { Toaster } from "react-hot-toast";
-
 import { WalletButton } from "../solana/solana-provider";
 
 export function UiLayout({
