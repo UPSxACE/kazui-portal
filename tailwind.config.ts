@@ -36,6 +36,7 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         "background-lighter": "var(--background-lighter)",
+        "background-light": "var(--background-light)",
         "background-secondary": "var(--background-secondary)",
         font: {
           1: "var(--font-1)",

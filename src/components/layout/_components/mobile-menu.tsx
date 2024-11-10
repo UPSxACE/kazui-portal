@@ -7,12 +7,12 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTrigger,
-} from "../_sui/sheet";
-import HamburgerMenu from "./_components/hamburger-button";
+} from "@/components/_sui/sheet";
+import HamburgerMenu from "@/components/layout/_components/hamburger-button";
 
 export default function MobileMenu() {
   return (
-    <div className="ml-auto basis-1/3 flex justify-end">
+    <div className="ml-auto basis-1/3 flex justify-end lg:hidden">
       <Sheet>
         <SheetTrigger asChild>
           <HamburgerMenu className="h-12 p-1" />

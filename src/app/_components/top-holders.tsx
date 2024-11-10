@@ -1,5 +1,6 @@
+import coin from "@/../public/kazui-currency.svg";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/_sui/avatar";
-import DotsContextButton from "@/components/ui/dots-context-button";
+import Image from "next/image";
 
 export default function TopHolders() {
   return (
@@ -37,13 +38,15 @@ function Account() {
           @User
         </span>
       </div>
-      <span className="ml-auto mt-auto mb-auto text-xs text-zinc-400/70 font-medium">
-        17d
-      </span>
+      <div className="flex items-center gap-1 ml-auto mt-auto mb-auto">
+        <span className="text-xs text-zinc-400/70 font-medium">14.8M</span>
+        <div
+          className="relative h-4"
+          style={{ aspectRatio: coin.width / coin.height }}
+        >
+          <Image src={coin} alt="Kazui logo" fill unoptimized />
+        </div>
+      </div>
     </article>
   );
-}
-
-function PostMenu() {
-  return <DotsContextButton className="ml-auto" />;
 }

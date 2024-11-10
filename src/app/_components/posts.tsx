@@ -6,7 +6,7 @@ import Actions from "./_components/actions";
 
 export default function Posts() {
   return (
-    <div className="flex flex-col flex-1 gap-4 py-4">
+    <div className="flex flex-col flex-1 gap-4">
       <Post />
       <Post />
     </div>
@@ -18,7 +18,7 @@ function Post() {
     <article className="main-wrapper bg-background rounded-md">
       <div className="main-inner-wrapper py-4 flex flex-col">
         <header className="flex">
-          <Avatar className="w-9 h-9">
+          <Avatar className="w-10 h-10">
             <AvatarImage src="https://github.com/shadcn.png" />
             <AvatarFallback>?</AvatarFallback>
           </Avatar>
