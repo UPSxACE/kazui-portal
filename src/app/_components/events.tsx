@@ -1,12 +1,14 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/_sui/avatar";
 import DotsContextButton from "@/components/ui/dots-context-button";
 import { FiGift } from "react-icons/fi";
 
 export default function Events() {
   return (
-    <div className="border-transparent w-full h-20 border border-solid rounded-md">
-      <h2 className="text-font-1 font-semibold text-xl">Events</h2>
-      <div className="mt-2 flex flex-col gap-3">
+    <div className="w-full bg-background rounded-md overflow-hidden shrink-0">
+      <h2 className="text-font-1 font-semibold text-lg px-3 py-2 bg-background-lighter">
+        Events
+      </h2>
+      <div className="flex flex-col gap-3 px-3 py-3">
+        <Event />
         <Event />
         <Event />
         <Event />

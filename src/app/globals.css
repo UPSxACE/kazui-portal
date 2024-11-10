@@ -15,8 +15,12 @@ body {
     --header-height: 4rem;
     --landing-height: calc(100svh - var(--header-height));
     --radius: 0.5rem;
-    --background: #100611;
-    --background-lighter: #212121;
+    --background: #2b2a32;
+    --background-secondary: #1f1e26;
+    --background-lighter: #34323f;
+    /* --background: #1a1e29;
+    --background-secondary: #191a24;
+    --background-lighter: #212121; */
     --font-1: #dbd6d7;
   }
 
@@ -211,26 +215,5 @@ table {
  * MARK: gradients
  */
 @layer components {
-  .gradient-1 {
-    position: relative;
-  }
-
-  .gradient-1 > * {
-    position: relative;
-  }
-
-  .gradient-1::before {
-    position: absolute;
-    top: 0;
-    left: 0;
-    content: "";
-    height: 100%;
-    width: 100%;
-    background: linear-gradient(
-      178.1deg,
-      var(--background) 8.5%,
-      #1a0909 82.4%
-    );
-    /* background: radial-gradient(circle at 48.7% 44.3%, #2a1212 0%, #2a1212 22.9%, #2a1212 76.7%, #2a1212 100.2%); */
-  }
+ 
 }

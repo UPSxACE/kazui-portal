@@ -6,7 +6,7 @@ import Actions from "./_components/actions";
 
 export default function Posts() {
   return (
-    <div className="flex-col flex-1">
+    <div className="flex flex-col flex-1 gap-4 py-4">
       <Post />
       <Post />
     </div>
@@ -15,7 +15,7 @@ export default function Posts() {
 
 function Post() {
   return (
-    <article className="main-wrapper border-b border-solid border-zinc-500/40">
+    <article className="main-wrapper bg-background rounded-md">
       <div className="main-inner-wrapper py-4 flex flex-col">
         <header className="flex">
           <Avatar className="w-9 h-9">
@@ -35,7 +35,7 @@ function Post() {
         </header>
         <figure className="mt-2 overflow-hidden rounded-md">
           <DynamicImage
-            className="w-full"
+            className="w-full max-h-[500px] object-contain bg-black"
             src="/samples/meme1.jpg"
             alt="meme"
             fallback={

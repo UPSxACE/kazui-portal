@@ -1,11 +1,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/_sui/avatar";
 import DotsContextButton from "@/components/ui/dots-context-button";
 
-export default function NewAccounts() {
+export default function Richest() {
   return (
     <div className="w-full bg-background rounded-md overflow-hidden shrink-0">
       <h2 className="text-font-1 font-semibold text-lg px-3 py-2 bg-background-lighter">
-        Newest Accounts
+        Richest
       </h2>
       <div className="flex flex-col gap-3 px-3 py-3">
         <Account />
