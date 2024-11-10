@@ -20,7 +20,7 @@ export default function Header() {
             className="relative h-10 mr-auto sm:mr-0"
             style={{ aspectRatio: logo.width / logo.height }}
           >
-            <Image src={logo} alt="Kazui logo" fill />
+            <Image decoding="sync" priority src={logo} alt="Kazui logo" fill />
           </div>
           <span
             className={`hidden sm:inline ml-1 mr-auto text-center text-white text-2xl ${font.className}`}

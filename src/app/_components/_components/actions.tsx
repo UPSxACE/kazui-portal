@@ -19,6 +19,8 @@ export default function Actions() {
       <button onClick={toggle} className="text-font-1 text-3xl">
         {liked ? (
           <Image
+            decoding="sync"
+            priority
             unoptimized
             src={flame}
             style={{
@@ -30,6 +32,8 @@ export default function Actions() {
           />
         ) : (
           <Image
+            decoding="sync"
+            priority
             unoptimized
             src={flameWhite}
             style={{
