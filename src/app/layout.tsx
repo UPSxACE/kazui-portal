@@ -1,6 +1,7 @@
 import { SolanaProvider } from "@/components/_/solana/solana-provider";
 import Header from "@/components/layout/header";
 import { ThemeProvider } from "@/components/layout/theme-provider";
+import { WalletStateProvider } from "@/components/wallet/wallet-state";
 import "./globals.css";
 import { ReactQueryProvider } from "./react-query-provider";
 
@@ -24,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning={true}>
       <body>
         <ThemeProvider
           attribute="class"
@@ -33,16 +34,18 @@ export default function RootLayout({
         >
           <ReactQueryProvider>
             <SolanaProvider>
-              <div className="flex flex-col items-center bg-background-secondary">
-                <Header />
-                <div className=" max-w-[112.5rem] flex w-full">
-                  {/* <aside className="w-60 xl:w-72 shrink-0 bg-background border-r border-solid border-border hidden sm:block"></aside> */}
-                  <div className="w-full flex flex-col items-center h-landing gradient-1 px-4">
-                    {children}
+              <WalletStateProvider>
+                <div className="flex flex-col items-center bg-background-secondary">
+                  <Header />
+                  <div className=" max-w-[112.5rem] flex w-full">
+                    {/* <aside className="w-60 xl:w-72 shrink-0 bg-background border-r border-solid border-border hidden sm:block"></aside> */}
+                    <div className="w-full flex flex-col items-center h-landing gradient-1 px-4">
+                      {children}
+                    </div>
+                    {/* <aside className="w-60 xl:w-72 shrink-0 bg-background border-l border-solid border-border hidden 2md:block"></aside> */}
                   </div>
-                  {/* <aside className="w-60 xl:w-72 shrink-0 bg-background border-l border-solid border-border hidden 2md:block"></aside> */}
                 </div>
-              </div>
+              </WalletStateProvider>
             </SolanaProvider>
           </ReactQueryProvider>
         </ThemeProvider>
