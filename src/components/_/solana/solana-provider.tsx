@@ -19,7 +19,13 @@ export const WalletButton = dynamic(
   }
 );
 
-export function SolanaProvider({ children }: { children: ReactNode }) {
+export function SolanaProvider({
+  children,
+  autoconnect = true,
+}: {
+  children: ReactNode;
+  autoconnect?: boolean;
+}) {
   const endpoint = "https://api.devnet.solana.com"; //FIXME "https://api.mainnet-beta.solana.com";
   const onError = useCallback((error: WalletError) => {
     console.error(error);
@@ -27,7 +33,7 @@ export function SolanaProvider({ children }: { children: ReactNode }) {
 
   return (
     <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={[]} onError={onError} autoConnect={true}>
+      <WalletProvider wallets={[]} onError={onError} autoConnect={autoconnect}>
         <WalletModalProvider>{children}</WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>

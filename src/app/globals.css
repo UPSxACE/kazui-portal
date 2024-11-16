@@ -23,6 +23,7 @@ body {
     --background-secondary: #191a24;
     --background-lighter: #212121; */
     --font-1: #dbd6d7;
+    --font-disabled: #9ca3af;
   }
 
   @media screen and (min-width: 640px) {

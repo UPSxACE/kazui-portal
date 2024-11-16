@@ -36,7 +36,7 @@ function Post() {
         <figure className="mt-2 overflow-hidden rounded-md">
           <DynamicImage
             className="w-full max-h-[500px] object-contain bg-black"
-            src="/samples/meme1.jpg"
+            src="/samples/meme2.jpeg"
             alt="meme"
             fallback={
               <div className="bg-zinc-200 aspect-square w-full flex justify-center items-center select-none text-7xl text-zinc-400/70">

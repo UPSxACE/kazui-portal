@@ -15,8 +15,11 @@ import {
   useState,
 } from "react";
 import { twJoin } from "tailwind-merge";
+import { decodeUTF8 } from "tweetnacl-util";
+import useGetKazuiBalance from "./_hooks/use-get-kazui-balance";
 
 export type WalletState = {
+  loggedInAddress: string | null;
   modalOpen: boolean;
   handleClick: () => void;
   loading: boolean;
@@ -29,11 +32,18 @@ export type WalletState = {
     | "Disconnecting..."
     | "Loading..."
     | "Select wallet";
-  status: "connected" | "connecting" | "disconnecting" | "loading" | "waiting";
+  status:
+    | "connected"
+    | "profile-ready"
+    | "all-ready"
+    | "connecting"
+    | "disconnecting"
+    | "loading"
+    | "waiting";
   disconnect: () => Promise<void>;
   kazui: string | null;
   profile: {
-    rubys: string;
+    rubies: string;
     username: string;
     nickname: string;
   } | null;
@@ -49,12 +59,79 @@ export function useWalletState() {
   return walletState;
 }
 
-export function WalletStateProvider({ children }: { children: ReactNode }) {
-  const { wallets, select, connecting, disconnecting, connected, disconnect } =
-    useWallet();
+export function WalletStateProvider({
+  children,
+  initialAddress,
+}: {
+  children: ReactNode;
+  initialAddress?: string;
+}) {
+  const [loggedInAddress, setLoggedInAddress] = useState(
+    initialAddress || null
+  );
+
+  const {
+    wallets,
+    select,
+    connecting,
+    disconnecting,
+    connected,
+    disconnect,
+    signMessage,
+    publicKey,
+  } = useWallet();
+
+  const tesss = useGetKazuiBalance({ ownerAddress: publicKey });
+  console.log(tesss.data);
+
+  async function generateSignature() {
+    return;
+    if (!publicKey) throw new Error("Public key not ready");
+    if (!signMessage) throw new Error("Sign message function not ready");
+    const message = publicKey.toString() + ":" + Date.now();
+    const messageBits = decodeUTF8(message);
+    const signatureBits = await signMessage(messageBits);
+    let signatureStr = "";
+    for (let i = 0; i < signatureBits.length; i++) {
+      signatureStr += String.fromCharCode(signatureBits[i]);
+    }
+    const signature = btoa(signatureStr);
+    function base64ToUint8Bits(base64String: string) {
+      const binaryString = atob(base64String); // Decode base64 to binary string
+      const uint8Array = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        uint8Array[i] = binaryString.charCodeAt(i);
+      }
+      return uint8Array;
+    }
+    const reverseTest = base64ToUint8Bits(signature);
+    console.log({ message, signature: btoa(signature) });
+    function areUint8ArraysEqual(arr1: Uint8Array, arr2: Uint8Array) {
+      // Check if they are the same length
+      if (arr1.length !== arr2.length) {
+        return false;
+      }
+
+      // Compare each element
+      for (let i = 0; i < arr1.length; i++) {
+        if (arr1[i] !== arr2[i]) {
+          return false;
+        }
+      }
+
+      // If all elements are the same, the arrays are equal
+      return true;
+    }
+    console.log("EQUAL:", areUint8ArraysEqual(signatureBits, reverseTest));
+
+    return { message, signature };
+  }
 
   const [open, setOpen] = useState(false);
   const [ready, setReady] = useState(false);
+
+  const [kazui, setKazui] = useState<WalletState["kazui"]>(null);
+  const [profile, setProfile] = useState<WalletState["profile"]>(null);
 
   const loading = connecting || disconnecting || !ready;
 
@@ -67,7 +144,11 @@ export function WalletStateProvider({ children }: { children: ReactNode }) {
   })();
 
   const status = (function () {
-    if (connected) return "connected";
+    if (connected) {
+      if (profile) return "profile-ready";
+      if (kazui) return "all-ready";
+      return "connected";
+    }
     if (connecting) return "connecting";
     if (disconnecting) return "disconnecting";
     if (loading) return "loading"; // NOTE: fallback
@@ -93,24 +174,20 @@ export function WalletStateProvider({ children }: { children: ReactNode }) {
     setReady(true);
   }, []);
 
-  const [kazui, setKazui] = useState<WalletState["kazui"]>(null);
-  const [profile, setProfile] = useState<WalletState["profile"]>(null);
-
   useEffect(() => {
     let timeout: NodeJS.Timeout | null = null;
 
-    if (status === "connected") {
-      if (!kazui || !profile) {
-        timeout = setTimeout(() => {
-          setKazui("14.8M");
-          setProfile({
-            username: "username",
-            nickname: "Username",
-            rubys: "100.000",
-          });
-        }, 1000);
-        return;
-      }
+    if (status === "connected" && publicKey && signMessage) {
+      generateSignature();
+      // timeout = setTimeout(() => {
+      //   setKazui("14.8M");
+      //   setProfile({
+      //     username: "username",
+      //     nickname: "Username",
+      //     rubies: "100.000",
+      //   });
+      // }, 1000);
+      return;
     }
 
     setKazui(null);
@@ -119,9 +196,10 @@ export function WalletStateProvider({ children }: { children: ReactNode }) {
     return () => {
       if (timeout) clearTimeout(timeout);
     };
-  }, [status]);
+  }, [status, publicKey, signMessage]);
 
   const value: WalletState = {
+    loggedInAddress,
     modalOpen: open,
     handleClick,
     loading,

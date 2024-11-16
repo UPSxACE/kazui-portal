@@ -40,6 +40,7 @@ const config: Config = {
         "background-secondary": "var(--background-secondary)",
         font: {
           1: "var(--font-1)",
+          disabled: "var(--font-disabled)",
         },
         border: "#373737",
       },

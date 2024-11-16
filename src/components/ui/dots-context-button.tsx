@@ -10,6 +10,7 @@ const DotsContextButton = forwardRef<HTMLButtonElement, ButtonProps>(
       <Button
         variant="link"
         {...props}
+        ref={ref}
         className={twMerge(
           "aspect-square h-full text-zinc-300/90 text-2xl p-1",
           props.className

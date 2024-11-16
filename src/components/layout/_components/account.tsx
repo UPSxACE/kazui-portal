@@ -5,42 +5,52 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/_sui/popover";
-import { useWalletState } from "@/components/wallet/wallet-state";
+import { useAppState } from "@/components/wallet/app-state";
 import { PopoverArrow } from "@radix-ui/react-popover";
+import { WalletName } from "@solana/wallet-adapter-base";
 import { ChevronDown } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import useAttemptLogin from "./_hooks/use-attempt-login";
 
 export default function Account() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { status, handleClick, disconnect } = useWalletState();
+  const { credentials, wallet, loggedIn } = useAppState();
 
   function getContent() {
-    if (status === "connected") return <Connected />;
-    if (status === "loading")
+    if (loggedIn && credentials.profile === false) {
       return <span className="text-center w-full">Loading...</span>;
-    if (status === "connecting")
-      return <span className="text-center w-full">Loading...</span>;
-    if (status === "disconnecting")
-      return <span className="text-center w-full">Disconnecting...</span>;
-    if (status === "waiting")
+    }
+    if (loggedIn && credentials.profile) {
+      return <Connected />;
+    }
+    if (!loggedIn && wallet.status === "disconnected") {
       return <span className="text-center w-full">Connect</span>;
+    }
+    return <span className="text-center w-full">Loading...</span>;
   }
 
+  // const handleAccountClick = () => {
+  //   if (status === "waiting") {
+  //     return handleClick();
+  //   }
+  //   if (status === "connected") {
+  //     setMenuOpen((x) => !x);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   if (status !== "connected") {
+  //     setMenuOpen(false);
+  //   }
+  // }, [menuOpen, status]);
+
+  const attemptLogin = useAttemptLogin();
   const handleAccountClick = () => {
-    if (status === "waiting") {
-      return handleClick();
-    }
-    if (status === "connected") {
-      setMenuOpen((x) => !x);
+    if (!loggedIn && wallet.status === "disconnected") {
+      attemptLogin("Solflare" as WalletName);
     }
   };
-
-  useEffect(() => {
-    if (status !== "connected") {
-      setMenuOpen(false);
-    }
-  }, [menuOpen, status]);
-
+  const disconnect = () => {};
   return (
     <Popover open={menuOpen}>
       <PopoverTrigger asChild>
@@ -62,14 +72,16 @@ export default function Account() {
 }
 
 function Connected() {
-  const { profile } = useWalletState();
+  const {
+    credentials: { profile },
+  } = useAppState();
 
   if (!profile) return <span className="text-center w-full">Loading...</span>;
 
   return (
     <>
       <Avatar className="w-8 h-8">
-        <AvatarImage src="https://github.com/shadcn.png" />
+        <AvatarImage src={profile.picture} />
         <AvatarFallback className="rounded-md">?</AvatarFallback>
       </Avatar>
 

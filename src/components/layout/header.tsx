@@ -1,10 +1,10 @@
-import logo from "@/../public/kazui-coin.svg";
+import logo from "@/../public/logo-2.svg";
+import { Irish_Grover } from "next/font/google";
 import Image from "next/image";
-import MobileMenu from "./_components/mobile-menu";
 import Account from "./_components/account";
 import Balance from "./_components/balance";
 import BigScreenMenu from "./_components/big-screen-menu";
-import { Irish_Grover } from "next/font/google";
+import MobileMenu from "./_components/mobile-menu";
 
 const font = Irish_Grover({
   subsets: ["latin"],
@@ -23,15 +23,15 @@ export default function Header() {
             <Image decoding="sync" priority src={logo} alt="Kazui logo" fill />
           </div>
           <span
-            className={`hidden sm:inline ml-1 mr-auto text-center text-white text-2xl ${font.className}`}
+            className={`hidden sm:inline ml-2 mr-auto text-center text-white text-2xl ${font.className}`}
           >
-            KAZUI
+            PORTAL
           </span>
         </div>
         <span
           className={`sm:hidden ml-auto mr-auto text-center basis-1/3 text-white text-2xl ${font.className}`}
         >
-          KAZUI
+          PORTAL
         </span>
         <BigScreenMenu />
         <MobileMenu />

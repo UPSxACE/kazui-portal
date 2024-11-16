@@ -10,7 +10,7 @@ const menu = [
 
 export default function BigScreenMenu() {
   return (
-    <nav className="ml-8 flex gap-6">
+    <nav className="ml-8 lg:flex gap-6 hidden">
       {menu.map((x, i) => (
         <Link key={i} className="" href={x.link}>
           {x.label}
