@@ -6,15 +6,8 @@ import useCredentialsState from "./use-credentials-state";
 export default function useWalletState(
   credentials: ReturnType<typeof useCredentialsState>
 ) {
-  // FIXME
-  // const [firstRender, setFirstRender] = useState(false);
   // false means it doesn't have a kazui wallet
   const kazuiQuery = useGetKazuiBalance(credentials.address);
-
-  // FIXME
-  // useEffect(() => {
-  //   setFirstRender(true);
-  // }, []);
 
   const {
     wallet,

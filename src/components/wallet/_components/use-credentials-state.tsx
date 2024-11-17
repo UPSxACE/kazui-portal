@@ -11,21 +11,17 @@ export default function useCredentialsState(initialAddress?: string) {
     refetch,
     ...profileQuery
   } = useQuery({
-    queryKey: ["profile", address],
+    queryKey: ["profile", address, !!address],
     queryFn: async () => {
       const data: ProfileData | false = await api
         .get("/user")
         .then(({ data }) => {
-          const dataParsed = profileDataSchema.parse(data);
-          if (!dataParsed) return dataParsed;
-          const { rubies, ...dataFiltered } = dataParsed;
-          return { ...dataFiltered, rubies: String(rubies) };
+          return profileDataSchema.parse(data);
         });
       return data;
     },
     enabled: !!address,
   });
-  console.log("ERROR:", profileQuery.error);
 
   const error = profileQuery.error; // TODO: trigger error toast on error
 

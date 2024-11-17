@@ -53,7 +53,6 @@ export default function CeateAccountModal(props: Props) {
     credentials: { setAddress, refetchProfile },
     wallet: { refetchKazui },
   } = useAppState();
-  const [_address, setAddress_] = useState("");
 
   const { value, toggle } = useToggle(1);
   const visible = value === 1;
@@ -80,10 +79,9 @@ export default function CeateAccountModal(props: Props) {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setSubmiting(true);
-    await api.post("/user/create-profile", values).then(({ data }) => {
+    await api.post("/user/create-profile", values).then(() => {
       setSubmiting(false);
       wrap(() => {
-        setAddress_(z.string().parse(data));
         setStep(4);
       })();
     });
@@ -137,7 +135,6 @@ export default function CeateAccountModal(props: Props) {
             key={"0"}
             invisible={!visible}
             onClick={() => {
-              setAddress(_address);
               refetchProfile();
               refetchKazui();
             }}

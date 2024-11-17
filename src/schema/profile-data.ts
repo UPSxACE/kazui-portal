@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export type ProfileData =
   | {
-      rubies: string;
+      rubies: number;
       username: string;
       nickname: string;
       picture: string;

@@ -18,7 +18,11 @@ export default function useGetKazuiBalance(ownerAddress?: string | null) {
   const { connection } = useConnection();
 
   const query = useQuery({
-    queryKey: ["kazui-balance", ownerAddress?.toString()],
+    queryKey: [
+      "kazui-balance",
+      ownerAddress?.toString(),
+      ownerAddress !== null,
+    ],
     queryFn: async () => {
       if (!ownerAddress) return null;
       const ataAddress = getAssociatedTokenAddressSync(

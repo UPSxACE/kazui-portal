@@ -7,11 +7,6 @@ import { useCallback, useEffect, useState } from "react";
 import { decodeUTF8 } from "tweetnacl-util";
 import { z } from "zod";
 
-// first connect wallet
-// then sign message
-// then try get cookie from server
-// server will answer with address, so set address // FIXME: debug react rerenders
-
 export default function useAttemptLogin() {
   const [attempting, setAttempting] = useState<WalletName | false>(false);
   const {
