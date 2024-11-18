@@ -22,23 +22,38 @@ export default function useAttemptLogin() {
     disconnect,
   } = useWallet();
   const {
-    credentials: { setAddress },
+    loggedIn,
+    credentials: { address, setAddress },
   } = useAppState();
 
   const adapterName = wallet?.adapter.name;
 
   const login = useCallback(async () => {
-    if (!attempting) return;
+    if (!attempting) {
+      return;
+    }
     if (!connected && !connecting && !disconnecting) {
       // select
       if (adapterName === attempting) {
-        return connect();
+        // FIXME: add warning to connection to phantom; problems in connection, specially after changing wallet = reload page
+        // NOTE: I solved a problem with connecting with wrong accounts(they would auto-connect with the wrong ones) with DisconnectResolution in solana-provider.tsx
+        //       The fix did work with Solflare, but not with Phantom! H
+        connect()
+          .then((x) => console.log("YE"))
+          .catch((x) => console.log("NO"));
+        return;
       } else {
         return select(attempting);
       }
     }
 
     if (connected && publicKey && signMessage) {
+      console.log(connected, publicKey.toString(), signMessage);
+      // if already loggedIn, stop here
+      if (loggedIn) {
+        setAttempting(false);
+        return;
+      }
       const address = publicKey.toString();
       // sign, request, get cookie, setaddress, setattempting to false
       const challenge = await api
@@ -61,11 +76,17 @@ export default function useAttemptLogin() {
         .then(({ data }) => {
           return z.boolean().parse(data);
         });
+      // FIXME: MODAL: watch if they are trying to login with different wallet and signing with other!
+      // FIXME: catch -> MODAL: make sure you sign with the correct wallet if you have many!
 
       if (ok) {
         setAddress(publicKey.toString());
         setAttempting(false);
       }
+    }
+
+    if (!connecting && !disconnecting) {
+      setAttempting(false);
     }
   }, [
     attempting,
@@ -88,6 +109,7 @@ export default function useAttemptLogin() {
   }, [attempting, publicKey, connected, login, adapterName]);
 
   function attempt(walletName: WalletName) {
+
     setAttempting(walletName);
   }
 

@@ -12,7 +12,7 @@ import HamburgerMenu from "@/components/layout/_components/hamburger-button";
 
 export default function MobileMenu() {
   return (
-    <div className="ml-auto basis-1/3 flex justify-end lg:hidden">
+    <div className="ml-auto basis-1/3 sm:basis-full flex justify-end lg:hidden">
       <Sheet>
         <SheetTrigger asChild>
           <HamburgerMenu className="h-12 p-1" />

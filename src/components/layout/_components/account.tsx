@@ -1,6 +1,12 @@
 "use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/_sui/avatar";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/components/_sui/dialog";
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -8,13 +14,18 @@ import {
 import { useAppState } from "@/components/wallet/app-state";
 import { PopoverArrow } from "@radix-ui/react-popover";
 import { WalletName } from "@solana/wallet-adapter-base";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { twJoin } from "tailwind-merge";
 import useAttemptLogin from "./_hooks/use-attempt-login";
+import api from "@/lib/api";
 
 export default function Account() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [walletDialogOpen, setWalletDialogOpen] = useState(false);
   const { credentials, wallet, loggedIn } = useAppState();
+  const { disconnect } = useWallet();
 
   function getContent() {
     if (loggedIn && credentials.profile === false) {
@@ -29,45 +40,88 @@ export default function Account() {
     return <span className="text-center w-full">Loading...</span>;
   }
 
-  // const handleAccountClick = () => {
-  //   if (status === "waiting") {
-  //     return handleClick();
-  //   }
-  //   if (status === "connected") {
-  //     setMenuOpen((x) => !x);
-  //   }
-  // };
+  const walletLoading =
+    wallet.status !== "connected" && wallet.status !== "disconnected";
 
-  // useEffect(() => {
-  //   if (status !== "connected") {
-  //     setMenuOpen(false);
-  //   }
-  // }, [menuOpen, status]);
-
-  const attemptLogin = useAttemptLogin();
   const handleAccountClick = () => {
     if (!loggedIn && wallet.status === "disconnected") {
-      attemptLogin("Solflare" as WalletName);
+      setWalletDialogOpen(true);
+    }
+    if (loggedIn && !walletLoading) {
+      setMenuOpen((x) => !x);
     }
   };
-  const disconnect = () => {};
+
+  const reconnectWallet = () => {
+    setWalletDialogOpen(true);
+  };
+  const disconnectWallet = () => {
+    disconnect();
+  };
+  const logout = () => {
+    api.post("/auth/logout");
+    credentials.setAddress(null);
+    disconnect();
+    setMenuOpen(false);
+  };
+
+  // force close menu on user not logged in
+  useEffect(() => {
+    if (menuOpen && !loggedIn) {
+      setMenuOpen(false);
+    }
+  }, [menuOpen, walletLoading, loggedIn]);
+
   return (
-    <Popover open={menuOpen}>
-      <PopoverTrigger asChild>
-        <button
-          onClick={handleAccountClick}
-          className="hidden lg:flex border border-solid border-gray-600/80 hover:border-gray-400 ml-2 h-11 w-44 py-[0.125rem] px-[0.35rem] rounded-md relative items-center justify-between gap-[0.3rem]"
+    <>
+      <Popover open={menuOpen}>
+        <PopoverTrigger asChild>
+          <button
+            onClick={handleAccountClick}
+            className="hidden lg:flex border border-solid border-gray-600/80 hover:border-gray-400 ml-2 h-11 w-44 py-[0.125rem] px-[0.35rem] rounded-md relative items-center justify-between gap-[0.3rem]"
+          >
+            {getContent()}
+          </button>
+        </PopoverTrigger>
+        <PopoverContent
+          className="w-52 flex flex-col p-0 py-2"
+          side={"bottom"}
+          align="end"
         >
-          {getContent()}
-        </button>
-      </PopoverTrigger>
-      <PopoverContent className="w-52" side={"bottom"} align="end">
-        <PopoverArrow className="fill-background-lighter relative right-[4.28rem]" />
-        <button className="w-full" onClick={disconnect}>
-          Disconnect
-        </button>
-      </PopoverContent>
-    </Popover>
+          <PopoverArrow className="fill-background-lighter relative right-[4.28rem]" />
+          {loggedIn && wallet.status === "loading" && (
+            <button className="w-full py-2 px-4 hover:bg-background leading-normal">
+              ...
+            </button>
+          )}
+          {loggedIn && wallet.status === "connected" && (
+            <button
+              className="w-full py-2 px-4 hover:bg-background leading-normal"
+              onClick={disconnectWallet}
+            >
+              Disconnect
+            </button>
+          )}
+          {loggedIn && wallet.status === "disconnected" && (
+            <button
+              className="w-full py-2 px-4 hover:bg-background leading-normal"
+              onClick={reconnectWallet}
+            >
+              Reconnect Wallet
+            </button>
+          )}
+          {loggedIn && (
+            <button
+              className="w-full py-2 px-4 hover:bg-background leading-normal"
+              onClick={logout}
+            >
+              Logout
+            </button>
+          )}
+        </PopoverContent>
+      </Popover>
+      <WalletDialog state={[walletDialogOpen, setWalletDialogOpen]} />
+    </>
   );
 }
 
@@ -90,5 +144,70 @@ function Connected() {
         <ChevronDown />
       </span>
     </>
+  );
+}
+
+function WalletDialog({
+  state,
+}: {
+  state: [boolean, Dispatch<SetStateAction<boolean>>];
+}) {
+  const [open, setOpen] = state;
+
+  const { wallets } = useWallet();
+
+  const attemptLogin = useAttemptLogin();
+
+  const connectToWallet = (walletName: WalletName<string>) => {
+    return () => {
+      attemptLogin(walletName);
+      setOpen(false);
+    };
+  };
+
+  return (
+    <Dialog open={open}>
+      <DialogContent
+        className="max-w-96 px-0 pb-3 pt-5"
+        onInteractOutside={() => setOpen(false)}
+      >
+        <DialogTitle
+          className="text-center text-2xl"
+          wrapperClassName={twJoin(
+            "p-8 pt-11 pb-5 flex justify-center items-center",
+            wallets.length === 0 && "hidden"
+          )}
+          closeClassName="absolute top-4 right-4 p-2 bg-background-light rounded-full"
+          onClose={() => setOpen(false)}
+        >
+          Connect a wallet on <br />
+          Solana to continue
+        </DialogTitle>
+        <DialogDescription className="flex flex-col gap-2">
+          {wallets.length === 0 && (
+            <span className="text-center w-full block pt-1 pb-3 text-xl">
+              No wallet extension detected.
+            </span>
+          )}
+          {wallets.map((wallet) => (
+            <button
+              key={wallet.adapter.name}
+              onClick={connectToWallet(wallet.adapter.name)}
+              className="flex justify-start items-center px-4 hover:bg-background-light py-2"
+            >
+              <img
+                className="h-7 w-7"
+                src={wallet.adapter.icon}
+                alt="wallet icon"
+              />
+              <span className="ml-3 text-lg">{wallet.adapter.name}</span>
+              <span className="ml-auto text-base text-zinc-300/80">
+                Detected
+              </span>
+            </button>
+          ))}
+        </DialogDescription>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -32,19 +32,19 @@ export default function useWalletState(
       return "disconnected";
     }
     if (connected && !credentials.address) {
-      console.log("WAITING");
       // NOTE: wallet shouldn't be connected without a session unless it's currently trying to login and get the session cookie
       return "waiting-login";
     }
     if (connected && credentials.address !== publicKey?.toString()) {
-      console.log("WRONG");
       return "wrong-wallet"; // TODO: trigger modal
     }
     return "connected";
   })();
 
   useEffect(() => {
-    if (walletStatus === "wrong-wallet") disconnect();
+    if (walletStatus === "wrong-wallet") {
+      disconnect();
+    }
   }, [walletStatus, disconnect]);
 
   useEffect(() => {

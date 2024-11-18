@@ -26,7 +26,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const cookieStore = await cookies();
+  const cookieStore = cookies();
   const jwt = cookieStore.get("authToken")?.value;
   const payload = jwt
     ? await jwtVerify<{ address: string }>(

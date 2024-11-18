@@ -21,11 +21,13 @@ import api from "@/lib/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "motion/react";
 import {
+  ChangeEventHandler,
   Dispatch,
   HTMLAttributes,
   MouseEventHandler,
   SetStateAction,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { Flipped, Flipper } from "react-flip-toolkit";
@@ -37,10 +39,11 @@ import { twJoin } from "tailwind-merge";
 import { z } from "zod";
 import { useAppState } from "../app-state";
 
+// FIXME: add proper validation rules (also on server)
 const formSchema = z.object({
   username: z.string().min(2).max(50),
   nickname: z.string().min(2).max(50),
-  picture: z.string().min(2).max(50),
+  picture: z.string().min(2),
 });
 
 // type Props = ComponentProps<typeof motion.div>;
@@ -65,6 +68,13 @@ export default function CeateAccountModal(props: Props) {
       picture: "/profile-picture/default-1.svg",
     },
   });
+
+  const resetState = () => {
+    setStep(0);
+    setSubmiting(false);
+    toggle(1);
+    form.reset();
+  };
 
   const wrap =
     (callback: () => void, verify?: "username" | "nickname" | "picture") =>
@@ -137,6 +147,9 @@ export default function CeateAccountModal(props: Props) {
             onClick={() => {
               refetchProfile();
               refetchKazui();
+              setTimeout(() => {
+                resetState();
+              }, 1000);
             }}
             form={form}
           />
@@ -347,10 +360,16 @@ function Step3({
   submiting,
 }: StepProps & { submiting: boolean }) {
   const [selected, setSelected] = useState<number | string>(0);
+  const [customImage, setCustomImage] = useState<null | string>(null);
   useEffect(() => {
-    if (typeof selected === "number")
+    if (typeof selected === "number") {
+      if (selected === 9 && customImage) {
+        form.setValue("picture", customImage);
+        return;
+      }
       form.setValue("picture", `/profile-picture/default-${selected + 1}.svg`);
-  }, [selected]);
+    }
+  }, [selected, form, customImage]);
 
   return (
     <motion.div
@@ -366,7 +385,10 @@ function Step3({
           Choose a profile picture
         </h1>
       </div>
-      <ProfilePictureSelector state={[selected, setSelected]} />
+      <ProfilePictureSelector
+        state={[selected, setSelected]}
+        imageState={[customImage, setCustomImage]}
+      />
       <div className="flex mt-1">
         <Button
           onClick={previous}
@@ -434,10 +456,44 @@ function Step4({ invisible, onClick }: EdgeStepProps) {
 
 function ProfilePictureSelector({
   state,
+  imageState,
 }: {
   state: [number | string, Dispatch<SetStateAction<string | number>>];
+  imageState: [null | string, Dispatch<SetStateAction<string | null>>];
 }) {
   const [selected, setSelected] = state;
+  const [customImage, setCustomImage] = imageState;
+  const [uploading, setUploading] = useState(false);
+  const uploadInput = useRef<HTMLInputElement | null>(null);
+
+  const onUpload: ChangeEventHandler<HTMLInputElement> = async (event) => {
+    if (uploading) return;
+    if (!uploadInput.current?.files?.[0]) return;
+    setUploading(true);
+    await api
+      .postForm("/upload", {
+        file: uploadInput.current.files[0],
+      })
+      .then(({ data }) => {
+        return z.string().parse(data);
+      })
+      .then((url) => {
+        setCustomImage(url);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+
+    setUploading(false);
+    if (selected !== 9) setSelected(9);
+    uploadInput.current.value = "";
+  };
+
+  const clickCustomPicture: MouseEventHandler<HTMLLabelElement> = (event) => {
+    if (uploading) return;
+    if (customImage) setSelected(9);
+  };
+
   return (
     <div className="grid grid-cols-5 gap-5 flex-wrap mt-3 justify-between justify-items-center">
       {Array(9)
@@ -462,22 +518,46 @@ function ProfilePictureSelector({
             </button>
           );
         })}
-      <button
+      <input
+        ref={uploadInput}
+        disabled={uploading}
+        type="file"
+        id="new-account-profile-picture"
+        className="hidden"
+        onChange={onUpload}
+      />
+      <label
+        onClick={clickCustomPicture}
+        htmlFor="new-account-profile-picture"
         title="Upload picture"
         className={twJoin(
           "h-20 w-20 bg-gray-200 rounded-full border-gray-500 border relative overflow-hidden border-solid flex justify-center items-center transition-all duration-100",
-          false && "!border-red-700 !border-4"
+          9 === selected && "!border-red-700 !border-4",
+          !uploading && "hover:cursor-pointer"
         )}
-        type="button"
       >
-        <LuUpload className="text-gray-500 text-3xl" />
-        <Image
-          className="scale-[1.10] hidden select-none pointer-events-none"
-          alt="profile picture option"
-          fill
-          src={`/profile-picture/default-9.svg`}
-        />
-      </button>
+        {uploading && (
+          <div
+            className="inline-block h-20 w-20 animate-spin rounded-full border-4 border-solid border-current border-e-blue-400 align-[-0.125em] text-gray-300 motion-reduce:animate-[spin_1.5s_linear_infinite]"
+            role="status"
+          >
+            <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+              Loading...
+            </span>
+          </div>
+        )}
+        {!customImage && !uploading && (
+          <LuUpload className="text-gray-500 text-3xl" />
+        )}
+        {customImage && !uploading && (
+          <Image
+            className={"scale-[1.10] select-none pointer-events-none"}
+            alt="profile picture option"
+            fill
+            src={customImage}
+          />
+        )}
+      </label>
     </div>
   );
 }
