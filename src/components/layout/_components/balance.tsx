@@ -7,8 +7,7 @@ import Image from "next/image";
 
 export default function Balance() {
   const { credentials, wallet } = useAppState();
-
-  const kazui = wallet.kazui !== false ? wallet.kazui ?? null : null;
+  const kazui = wallet.kazui !== false ? wallet.kazui ?? null : 0;
   const rubies =
     credentials.profile !== false ? credentials.profile?.rubies ?? null : null;
 

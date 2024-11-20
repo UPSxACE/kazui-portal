@@ -11,5 +11,5 @@ export default function DynamicImage({ fallback, ...props }: Props) {
   if (error) return fallback;
 
   // FIXME
-  return <img {...props} onError={() => setError(true)} />;
+  return <img {...props} alt={props.alt} onError={() => setError(true)} />;
 }

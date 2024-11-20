@@ -1,6 +1,6 @@
-import { SolanaProvider } from "@/components/_/solana/solana-provider";
 import Header from "@/components/layout/header";
 import { ThemeProvider } from "@/components/layout/theme-provider";
+import { SolanaProvider } from "@/components/solana/solana-provider";
 import { AppStateProvider } from "@/components/wallet/app-state";
 import { jwtVerify } from "Jose";
 import { cookies } from "next/headers";

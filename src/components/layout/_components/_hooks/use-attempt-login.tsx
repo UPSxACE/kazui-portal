@@ -38,9 +38,7 @@ export default function useAttemptLogin() {
         // FIXME: add warning to connection to phantom; problems in connection, specially after changing wallet = reload page
         // NOTE: I solved a problem with connecting with wrong accounts(they would auto-connect with the wrong ones) with DisconnectResolution in solana-provider.tsx
         //       The fix did work with Solflare, but not with Phantom! H
-        connect()
-          .then((x) => console.log("YE"))
-          .catch((x) => console.log("NO"));
+        connect();
         return;
       } else {
         return select(attempting);

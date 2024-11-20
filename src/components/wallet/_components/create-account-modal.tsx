@@ -486,7 +486,7 @@ function ProfilePictureSelector({
 
     setUploading(false);
     if (selected !== 9) setSelected(9);
-    uploadInput.current.value = "";
+    if (uploadInput.current) uploadInput.current.value = "";
   };
 
   const clickCustomPicture: MouseEventHandler<HTMLLabelElement> = (event) => {
