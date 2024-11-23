@@ -1,3 +1,4 @@
+import { useSocketState } from "@/components/socket/socket-provider";
 import { useAppState } from "@/components/wallet/app-state";
 import api from "@/lib/api";
 import { WalletName } from "@solana/wallet-adapter-base";
@@ -25,6 +26,7 @@ export default function useAttemptLogin() {
     loggedIn,
     credentials: { address, setAddress },
   } = useAppState();
+  const { reconnect } = useSocketState();
 
   const adapterName = wallet?.adapter.name;
 
@@ -80,6 +82,7 @@ export default function useAttemptLogin() {
       if (ok) {
         setAddress(publicKey.toString());
         setAttempting(false);
+        reconnect();
       }
     }
 
@@ -107,7 +110,6 @@ export default function useAttemptLogin() {
   }, [attempting, publicKey, connected, login, adapterName]);
 
   function attempt(walletName: WalletName) {
-
     setAttempting(walletName);
   }
 

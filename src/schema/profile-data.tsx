@@ -6,6 +6,7 @@ export type ProfileData =
       username: string;
       nickname: string;
       picture: string;
+      created_at: string;
     }
   | false; // false means account needs to be created
 
@@ -15,5 +16,6 @@ export const profileDataSchema = z.literal(false).or(
     username: z.string(),
     nickname: z.string(),
     picture: z.string(),
+    created_at: z.string(),
   })
 );

@@ -11,7 +11,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/_sui/popover";
+import { useSocketState } from "@/components/socket/socket-provider";
 import { useAppState } from "@/components/wallet/app-state";
+import api from "@/lib/api";
 import { PopoverArrow } from "@radix-ui/react-popover";
 import { WalletName } from "@solana/wallet-adapter-base";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -19,13 +21,13 @@ import { ChevronDown } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { twJoin } from "tailwind-merge";
 import useAttemptLogin from "./_hooks/use-attempt-login";
-import api from "@/lib/api";
 
 export default function Account() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [walletDialogOpen, setWalletDialogOpen] = useState(false);
   const { credentials, wallet, loggedIn } = useAppState();
   const { disconnect } = useWallet();
+  const { reconnect } = useSocketState();
 
   function getContent() {
     if (loggedIn && credentials.profile === false) {
@@ -63,6 +65,7 @@ export default function Account() {
     credentials.setAddress(null);
     disconnect();
     setMenuOpen(false);
+    reconnect();
   };
 
   // force close menu on user not logged in

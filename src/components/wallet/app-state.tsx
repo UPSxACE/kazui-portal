@@ -16,7 +16,7 @@ export const AppStateContext = createContext<AppState | null>(null);
 export function useAppState() {
   const appState = useContext(AppStateContext);
   if (!appState)
-    throw new Error("Please add the AppStateProvider component to the tree");
+    throw new Error("Add the AppStateProvider component to the tree");
 
   return appState;
 }

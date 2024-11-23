@@ -1,6 +1,9 @@
 "use client";
 import api from "@/lib/api";
-import { ProfileData, profileDataSchema } from "@/schema/profile-data";
+import {
+  SelfProfileData,
+  selfProfileDataSchema,
+} from "@/schema/self-profile-data";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
@@ -13,10 +16,10 @@ export default function useCredentialsState(initialAddress?: string) {
   } = useQuery({
     queryKey: ["profile", address, !!address],
     queryFn: async () => {
-      const data: ProfileData | false = await api
+      const data: SelfProfileData | false = await api
         .get("/user")
         .then(({ data }) => {
-          return profileDataSchema.parse(data);
+          return selfProfileDataSchema.parse(data);
         });
       return data;
     },

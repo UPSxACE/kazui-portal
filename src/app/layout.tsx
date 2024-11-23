@@ -1,5 +1,6 @@
 import Header from "@/components/layout/header";
 import { ThemeProvider } from "@/components/layout/theme-provider";
+import SocketProvider from "@/components/socket/socket-provider";
 import { SolanaProvider } from "@/components/solana/solana-provider";
 import { AppStateProvider } from "@/components/wallet/app-state";
 import { jwtVerify } from "Jose";
@@ -47,16 +48,18 @@ export default async function RootLayout({
           <ReactQueryProvider>
             <SolanaProvider autoconnect={Boolean(payload?.payload?.address)}>
               <AppStateProvider initialAddress={initialAddress}>
-                <div className="flex flex-col items-center bg-background-secondary">
-                  <Header />
-                  <div className=" max-w-[112.5rem] flex w-full">
-                    {/* <aside className="w-60 xl:w-72 shrink-0 bg-background border-r border-solid border-border hidden sm:block"></aside> */}
-                    <div className="w-full flex flex-col items-center h-landing gradient-1 px-4">
-                      {children}
+                <SocketProvider>
+                  <div className="flex flex-col items-center bg-background-secondary">
+                    <Header />
+                    <div className=" max-w-[112.5rem] flex w-full">
+                      {/* <aside className="w-60 xl:w-72 shrink-0 bg-background border-r border-solid border-border hidden sm:block"></aside> */}
+                      <div className="w-full flex flex-col items-center h-landing gradient-1 px-4">
+                        {children}
+                      </div>
+                      {/* <aside className="w-60 xl:w-72 shrink-0 bg-background border-l border-solid border-border hidden 2md:block"></aside> */}
                     </div>
-                    {/* <aside className="w-60 xl:w-72 shrink-0 bg-background border-l border-solid border-border hidden 2md:block"></aside> */}
                   </div>
-                </div>
+                </SocketProvider>
               </AppStateProvider>
             </SolanaProvider>
           </ReactQueryProvider>
