@@ -6,13 +6,16 @@ import { useState } from "react";
 import { AiFillFire, AiOutlineFire } from "react-icons/ai";
 import { FaRegComment } from "react-icons/fa6";
 
-export default function Actions() {
+export default function Actions({
+  likes,
+  comments,
+}: {
+  likes: number;
+  comments: number;
+}) {
   const [liked, setLiked] = useState(false);
 
   const toggle = () => setLiked((x) => !x);
-
-  const likes = 16;
-  const comments = 8;
 
   return (
     <div className="mt-2 flex items-end text-base gap-[0.35rem]">

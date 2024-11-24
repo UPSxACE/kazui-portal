@@ -3,16 +3,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/_sui/avatar";
 import DotsContextButton from "@/components/ui/dots-context-button";
 import DynamicImage from "@/components/ui/dynamic-image";
 import api from "@/lib/api";
+import cuteDateSince from "@/lib/utils/cute-date-since";
 import { PostData, postDataSchema } from "@/schema/post-data";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useEffect, useRef, useState } from "react";
 import { MdImageNotSupported } from "react-icons/md";
+import { twJoin } from "tailwind-merge";
 import { z } from "zod";
 import Actions from "./_components/actions";
 import NewPost from "./new-post";
-import { twJoin } from "tailwind-merge";
-import cuteDateSince from "@/lib/utils/cute-date-since";
 
 export default function Posts() {
   const {
@@ -228,7 +228,7 @@ function Post({ data }: { data: PostData }) {
             />
           </figure>
         )}
-        <Actions />
+        <Actions likes={data.likes_count} comments={data.comments_count} />
         <div className="mt-[0.35rem]">
           <span className="font-bold text-sm leading-none">
             {data.owner.nickname}

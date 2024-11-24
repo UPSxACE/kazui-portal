@@ -96,7 +96,7 @@ export default function NewPost() {
     <AnimatePresence>
       {profile && (
         <motion.div
-          key="profile"
+          key={"profile"}
           initial={{ opacity: notFirstLoad ? 0 : 1 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
