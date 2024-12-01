@@ -36,7 +36,8 @@ export function SolanaProvider({
 }) {
   const [disconnected, setDisconnected] = useState<boolean | null>(null);
 
-  const endpoint = "https://api.devnet.solana.com"; //FIXME "https://api.mainnet-beta.solana.com";
+  const endpoint =
+    process.env.NEXT_PUBLIC_RPC || "https://api.devnet.solana.com"; //FIXME "https://api.mainnet-beta.solana.com";
   const onError = useCallback((error: WalletError) => {
     console.error(error);
   }, []);
