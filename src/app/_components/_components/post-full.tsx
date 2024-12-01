@@ -83,14 +83,14 @@ export default function PostFull({ data }: { data: PostWithCommentData }) {
       setDelta((x) => x - 1);
       api.post(`/post/${data.id}/dislike`).then(() => {
         setLocked(false);
-        client.invalidateQueries({
-          queryKey: ["post", data.id, "with-comments"],
-          exact: true,
-        });
-        client.invalidateQueries({
-          queryKey: ["post", data.id],
-          exact: true,
-        });
+        // client.invalidateQueries({
+        //   queryKey: ["post", data.id, "with-comments"],
+        //   exact: true,
+        // });
+        // client.invalidateQueries({
+        //   queryKey: ["post", data.id],
+        //   exact: true,
+        // });
       });
       return;
     }
@@ -98,14 +98,14 @@ export default function PostFull({ data }: { data: PostWithCommentData }) {
     setDelta((x) => x + 1);
     api.post(`/post/${data.id}/like`).then(() => {
       setLocked(false);
-      client.invalidateQueries({
-        queryKey: ["post", data.id, "with-comments"],
-        exact: true,
-      });
-      client.invalidateQueries({
-        queryKey: ["post", data.id],
-        exact: true,
-      });
+      // client.invalidateQueries({
+      //   queryKey: ["post", data.id, "with-comments"],
+      //   exact: true,
+      // });
+      // client.invalidateQueries({
+      //   queryKey: ["post", data.id],
+      //   exact: true,
+      // });
     });
   };
 

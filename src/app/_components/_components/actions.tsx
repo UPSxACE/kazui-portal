@@ -31,14 +31,14 @@ export default function Actions({
       setDelta((x) => x - 1);
       api.post(`/post/${id}/dislike`).then(() => {
         setLocked(false);
-        client.invalidateQueries({
-          queryKey: ["post", id, "with-comments"],
-          exact: true,
-        });
-        client.invalidateQueries({
-          queryKey: ["post", id],
-          exact: true,
-        });
+        // client.invalidateQueries({
+        //   queryKey: ["post", id, "with-comments"],
+        //   exact: true,
+        // });
+        // client.invalidateQueries({
+        //   queryKey: ["post", id],
+        //   exact: true,
+        // });
       });
       return;
     }
@@ -46,14 +46,14 @@ export default function Actions({
     setDelta((x) => x + 1);
     api.post(`/post/${id}/like`).then(() => {
       setLocked(false);
-      client.invalidateQueries({
-        queryKey: ["post", id, "with-comments"],
-        exact: true,
-      });
-      client.invalidateQueries({
-        queryKey: ["post", id],
-        exact: true,
-      });
+      // client.invalidateQueries({
+      //   queryKey: ["post", id, "with-comments"],
+      //   exact: true,
+      // });
+      // client.invalidateQueries({
+      //   queryKey: ["post", id],
+      //   exact: true,
+      // });
     });
   };
 

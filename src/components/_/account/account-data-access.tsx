@@ -140,18 +140,18 @@ export function useRequestAirdrop({ address }: { address: PublicKey }) {
     onSuccess: (signature) => {
       transactionToast(signature);
       return Promise.all([
-        client.invalidateQueries({
-          queryKey: [
-            "get-balance",
-            { endpoint: connection.rpcEndpoint, address },
-          ],
-        }),
-        client.invalidateQueries({
-          queryKey: [
-            "get-signatures",
-            { endpoint: connection.rpcEndpoint, address },
-          ],
-        }),
+        // client.invalidateQueries({
+        //   queryKey: [
+        //     "get-balance",
+        //     { endpoint: connection.rpcEndpoint, address },
+        //   ],
+        // }),
+        // client.invalidateQueries({
+        //   queryKey: [
+        //     "get-signatures",
+        //     { endpoint: connection.rpcEndpoint, address },
+        //   ],
+        // }),
       ]);
     },
   });
