@@ -18,7 +18,7 @@ import { ReactQueryProvider } from "./react-query-provider";
 // });
 
 export const metadata = {
-  title: "Kazui Portal",
+  title: "Legyon",
   description: "",
 };
 

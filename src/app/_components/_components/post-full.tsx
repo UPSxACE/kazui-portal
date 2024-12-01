@@ -13,8 +13,8 @@ import DynamicImage from "@/components/ui/dynamic-image";
 import { useAppState } from "@/components/wallet/app-state";
 import api from "@/lib/api";
 import cuteDateSince from "@/lib/utils/cute-date-since";
-import { PostWithCommentData } from "@/schema/post-data";
-import { useQueryClient } from "@tanstack/react-query";
+import { PostData, PostWithCommentData } from "@/schema/post-data";
+import { InfiniteData, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { ChangeEventHandler, useEffect, useRef, useState } from "react";
 import { CiCirclePlus } from "react-icons/ci";
@@ -84,7 +84,7 @@ export default function PostFull({ data }: { data: PostWithCommentData }) {
       api.post(`/post/${data.id}/dislike`).then(() => {
         setLocked(false);
         client.invalidateQueries({
-          queryKey: ["post", data.id, "comments"],
+          queryKey: ["post", data.id, "with-comments"],
           exact: true,
         });
         client.invalidateQueries({
@@ -99,7 +99,7 @@ export default function PostFull({ data }: { data: PostWithCommentData }) {
     api.post(`/post/${data.id}/like`).then(() => {
       setLocked(false);
       client.invalidateQueries({
-        queryKey: ["post", data.id, "comments"],
+        queryKey: ["post", data.id, "with-comments"],
         exact: true,
       });
       client.invalidateQueries({
@@ -144,7 +144,9 @@ export default function PostFull({ data }: { data: PostWithCommentData }) {
           <PostMenu />
         </header>
         <div className="mt-[0.35rem] py-1">
-          <span className="text-base leading-4">{data.text}</span>
+          <span className="text-base leading-4 whitespace-break-spaces">
+            {data.text}
+          </span>
         </div>
         {data?.images?.[0]?.path && (
           <figure
@@ -307,7 +309,7 @@ export default function PostFull({ data }: { data: PostWithCommentData }) {
                     <span className="text-lg leading-[1.1] font-semibold">
                       {comment.owner.nickname}
                     </span>
-                    <p className="bg-transparent w-full text-sm">
+                    <p className="bg-transparent w-full text-sm whitespace-break-spaces">
                       {comment.text}
                     </p>
                   </div>

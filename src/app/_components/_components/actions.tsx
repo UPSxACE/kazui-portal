@@ -32,7 +32,7 @@ export default function Actions({
       api.post(`/post/${id}/dislike`).then(() => {
         setLocked(false);
         client.invalidateQueries({
-          queryKey: ["post", id, "comments"],
+          queryKey: ["post", id, "with-comments"],
           exact: true,
         });
         client.invalidateQueries({
@@ -47,7 +47,7 @@ export default function Actions({
     api.post(`/post/${id}/like`).then(() => {
       setLocked(false);
       client.invalidateQueries({
-        queryKey: ["post", id, "comments"],
+        queryKey: ["post", id, "with-comments"],
         exact: true,
       });
       client.invalidateQueries({

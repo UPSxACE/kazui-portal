@@ -36,7 +36,11 @@ export default function Post({ data }: { data: PostData }) {
           <PostMenu />
         </header>
         <div className="mt-[0.35rem] py-1">
-          <span className="text-base leading-4">{data.text}</span>
+          <Link href={`/?p=${data.id}`} className="w-full block">
+            <span className="text-base leading-4 whitespace-break-spaces">
+              {data.text}
+            </span>
+          </Link>
         </div>
         {data?.images?.[0]?.path && (
           <figure
@@ -47,7 +51,7 @@ export default function Post({ data }: { data: PostData }) {
           >
             <DynamicImage
               onLoad={() => setReady(true)}
-              className="w-full max-h-[500px] object-contain bg-black"
+              className="w-full max-h-[500px] object-contain bg-transparent"
               src={data.images[0].path}
               alt="meme"
               fallback={
