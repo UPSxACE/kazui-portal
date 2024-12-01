@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Tooltip,
   TooltipContent,
@@ -18,14 +20,22 @@ export default function BigScreenMenu() {
     <nav className="text-base lg:flex gap-6 hidden justify-end mr-2 flex-1">
       {menu.map((x, i) => (
         <TooltipProvider key={i}>
-          <Tooltip>
-            <TooltipTrigger>
+          <Tooltip delayDuration={0}>
+            <TooltipTrigger
+              onClick={(event) => {
+                event.preventDefault();
+              }}
+            >
               <span key={i} className="">
                 {/**href={x.link} */}
                 {x.label}
               </span>
             </TooltipTrigger>
-            <TooltipContent>
+            <TooltipContent
+              onPointerDownOutside={(event) => {
+                event.preventDefault();
+              }}
+            >
               <p>Soon...</p>
             </TooltipContent>
           </Tooltip>
