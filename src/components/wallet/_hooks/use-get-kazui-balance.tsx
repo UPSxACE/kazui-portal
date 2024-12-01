@@ -16,6 +16,7 @@ const kazuiAddress = new PublicKey(
 
 // false means account doesn't exist
 export default function useGetKazuiBalance(ownerAddress?: string | null) {
+  console.log("Calling useGetKazuiBalance with:", ownerAddress);
   const { connection } = useConnection();
 
   const query = useQuery({
@@ -37,7 +38,10 @@ export default function useGetKazuiBalance(ownerAddress?: string | null) {
         undefined,
         TOKEN_PROGRAM_ID
       ).catch((err) => {
-        if (err.name === TokenAccountNotFoundError.name) return false;
+        if (err.name === TokenAccountNotFoundError.name) {
+          console.log("No kazui token account");
+          return false;
+        }
         throw err;
       });
 
@@ -45,6 +49,9 @@ export default function useGetKazuiBalance(ownerAddress?: string | null) {
     },
     enabled: ownerAddress !== null,
   });
+
+  console.log("DATA:", query.data);
+  if (query.error) console.log(query.error);
 
   return query;
 }
