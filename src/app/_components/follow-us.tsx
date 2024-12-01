@@ -31,6 +31,7 @@ export default function FollowUs() {
 function IconLink({ children, href }: { children: ReactNode; href: string }) {
   return (
     <Link
+      target="_blank"
       href={href}
       className="text-font-1 hover:text-white border-2 border-font-1 hover:border-white border-solid rounded-full h-9 w-9 text-xl flex justify-center items-center"
     >
