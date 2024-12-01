@@ -13,8 +13,8 @@ import DynamicImage from "@/components/ui/dynamic-image";
 import { useAppState } from "@/components/wallet/app-state";
 import api from "@/lib/api";
 import cuteDateSince from "@/lib/utils/cute-date-since";
-import { PostData, PostWithCommentData } from "@/schema/post-data";
-import { InfiniteData, useQueryClient } from "@tanstack/react-query";
+import { PostWithCommentData } from "@/schema/post-data";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { ChangeEventHandler, useEffect, useRef, useState } from "react";
 import { CiCirclePlus } from "react-icons/ci";
@@ -157,7 +157,7 @@ export default function PostFull({ data }: { data: PostWithCommentData }) {
           >
             <DynamicImage
               onLoad={() => setReady(true)}
-              className="w-full max-h-[500px] object-contain bg-black"
+              className="w-full max-h-[500px] object-contain bg-transparent"
               src={data.images[0].path}
               alt="meme"
               fallback={
@@ -279,7 +279,7 @@ export default function PostFull({ data }: { data: PostWithCommentData }) {
                       <Button
                         onClick={createPost}
                         loading={posting}
-                        disabled={characterCount < 1}
+                        disabled={characterCount < 1 || characterCount > 1000}
                         className="ml-auto px-4 text-xs"
                         variant="success"
                       >

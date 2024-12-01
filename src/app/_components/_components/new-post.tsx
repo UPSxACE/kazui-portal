@@ -218,7 +218,9 @@ export default function NewPost() {
                 <Button
                   onClick={createPost}
                   loading={posting}
-                  disabled={characterCount < 1 && !image}
+                  disabled={
+                    (characterCount < 1 && !image) || characterCount > 1000
+                  }
                   className="ml-auto px-4 text-xs"
                   variant="success"
                 >
