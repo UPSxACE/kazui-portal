@@ -4,7 +4,6 @@ import {
   getAccount,
   getAssociatedTokenAddressSync,
   TOKEN_PROGRAM_ID,
-  TokenAccountNotFoundError,
 } from "@solana/spl-token";
 import { useConnection } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
@@ -47,11 +46,12 @@ export default function useGetKazuiBalance(ownerAddress?: string | null) {
         })
         .catch((err) => {
           console.log("FAILED");
-          if (err.name === TokenAccountNotFoundError.name) {
+          if (err.name === "TokenAccountNotFoundError") {
             console.log("No kazui token account");
             return false;
           }
           console.log("Err:", err);
+          console.log("NAME:", err.name);
           throw err;
         });
 
