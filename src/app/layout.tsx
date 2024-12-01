@@ -3,7 +3,7 @@ import { ThemeProvider } from "@/components/layout/theme-provider";
 import SocketProvider from "@/components/socket/socket-provider";
 import { SolanaProvider } from "@/components/solana/solana-provider";
 import { AppStateProvider } from "@/components/wallet/app-state";
-import { jwtVerify } from "Jose";
+import { jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import "./globals.css";
 import { ReactQueryProvider } from "./react-query-provider";
