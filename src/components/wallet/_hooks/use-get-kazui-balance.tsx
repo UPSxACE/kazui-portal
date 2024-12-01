@@ -26,25 +26,36 @@ export default function useGetKazuiBalance(ownerAddress?: string | null) {
       ownerAddress !== null,
     ],
     queryFn: async () => {
+      console.log("QUERY FN", ownerAddress);
       if (!ownerAddress) return null;
+      console.log("not null");
       const ataAddress = getAssociatedTokenAddressSync(
         kazuiAddress,
         new PublicKey(ownerAddress)
       );
+      console.log("ATA address:", ataAddress.toString());
 
       const ata: false | Account = await getAccount(
         connection,
         ataAddress,
         undefined,
         TOKEN_PROGRAM_ID
-      ).catch((err) => {
-        if (err.name === TokenAccountNotFoundError.name) {
-          console.log("No kazui token account");
-          return false;
-        }
-        throw err;
-      });
+      )
+        .then((val) => {
+          console.log("Done!");
+          return val;
+        })
+        .catch((err) => {
+          console.log("FAILED");
+          if (err.name === TokenAccountNotFoundError.name) {
+            console.log("No kazui token account");
+            return false;
+          }
+          console.log("Err:", err);
+          throw err;
+        });
 
+      console.log("RESULT:", ata);
       return ata === false ? ata : ata.amount;
     },
     enabled: ownerAddress !== null,
