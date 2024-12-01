@@ -31,14 +31,17 @@ export default function NewAccounts() {
   });
 
   const error = accounts.findIndex((result) => result.isError) !== -1;
-  const isLoading = socketState.newestAccounts === null;
-  const ready = !error && !isLoading;
+  // const ready = !error && !isLoading;
   const data = accounts.reduce<ProfileData[]>((acc, curr) => {
     if (curr.isSuccess) {
       acc.push(curr.data);
     }
     return acc;
   }, []);
+  const isLoading =
+    socketState.newestAccounts === null ||
+    socketState.newestAccounts.length !== data.length;
+  const ready = !error && !isLoading && data.length > 0;
 
   return (
     <div className="w-full bg-background rounded-md overflow-hidden shrink-0">
@@ -73,7 +76,7 @@ function Account({ data }: { data: ProfileData }) {
   if (!data) return null;
   return (
     <article className="flex">
-      <Avatar className="w-10 h-10">
+      <Avatar className="w-9 h-9 rounded-md">
         <AvatarImage src={data.picture || undefined} />
         <AvatarFallback>?</AvatarFallback>
       </Avatar>

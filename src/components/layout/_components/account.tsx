@@ -22,7 +22,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { twJoin } from "tailwind-merge";
 import useAttemptLogin from "./_hooks/use-attempt-login";
 
-export default function Account() {
+export default function Account({ mobile }: { mobile?: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [walletDialogOpen, setWalletDialogOpen] = useState(false);
   const { credentials, wallet, loggedIn } = useAppState();
@@ -81,7 +81,12 @@ export default function Account() {
         <PopoverTrigger asChild>
           <button
             onClick={handleAccountClick}
-            className="hidden lg:flex border border-solid border-gray-600/80 hover:border-gray-400 ml-2 h-11 w-44 py-[0.125rem] px-[0.35rem] rounded-md relative items-center justify-between gap-[0.3rem]"
+            className={twJoin(
+              "border border-solid ml-2 h-11 w-44 py-[0.125rem] px-[0.35rem] rounded-md relative items-center justify-between gap-[0.3rem]",
+              mobile
+                ? "flex border-white text-white"
+                : "hidden lg:flex border-gray-600/80 hover:border-gray-400"
+            )}
           >
             {getContent()}
           </button>

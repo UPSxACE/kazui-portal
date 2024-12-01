@@ -1,4 +1,9 @@
-import Link from "next/link";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/_sui/tooltip";
 
 const menu = [
   // { label: "News", link: "#" },
@@ -10,11 +15,21 @@ const menu = [
 
 export default function BigScreenMenu() {
   return (
-    <nav className="text-base lg:flex gap-6 hidden justify-center flex-1">
+    <nav className="text-base lg:flex gap-6 hidden justify-end mr-2 flex-1">
       {menu.map((x, i) => (
-        <Link key={i} className="" href={x.link}>
-          {x.label}
-        </Link>
+        <TooltipProvider key={i}>
+          <Tooltip>
+            <TooltipTrigger>
+              <span key={i} className="">
+                {/**href={x.link} */}
+                {x.label}
+              </span>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Soon...</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       ))}
     </nav>
   );

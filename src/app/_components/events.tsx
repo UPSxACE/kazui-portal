@@ -2,6 +2,7 @@ import DotsContextButton from "@/components/ui/dots-context-button";
 import { FiGift } from "react-icons/fi";
 
 export default function Events() {
+  return null;
   return (
     <div className="w-full bg-background rounded-md overflow-hidden shrink-0">
       <h2 className="text-font-1 font-semibold text-lg px-3 py-2 bg-background-lighter">

@@ -11,8 +11,9 @@ export default function Balance() {
   const rubies =
     credentials.profile !== false ? credentials.profile?.rubies ?? null : null;
 
-  if (kazui === null || rubies === null) return <div className="ml-auto"></div>;
-  const kazuiDecimalNumber = Number(kazui) / 1000000000;
+  if (kazui === null || rubies === null)
+    return <div className="ml-auto hidden lg:flex"></div>;
+  const kazuiDecimalNumber = Number(kazui) / 1e9;
 
   return (
     <button className="text-sm hidden lg:flex border border-solid border-gray-600/80 group hover:border-gray-400 ml-auto h-11 py-2 px-3 rounded-md relative items-center justify-between gap-2">

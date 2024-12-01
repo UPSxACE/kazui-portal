@@ -1,5 +1,5 @@
 "use client";
-import logo from "@/../public/kazui-coin.svg";
+import logo from "@/../public/legyon-logo.jpg";
 import {
   DialogContent,
   DialogDescription,
@@ -41,8 +41,12 @@ import { useAppState } from "../app-state";
 
 // FIXME: add proper validation rules (also on server)
 const formSchema = z.object({
-  username: z.string().min(2).max(50),
-  nickname: z.string().min(2).max(50),
+  username: z
+    .string()
+    .min(2)
+    .max(15)
+    .regex(/^[a-zA-Z0-9]?([a-z0-9_.-]*[a-z0-9])?$/),
+  nickname: z.string().min(2).max(25),
   picture: z.string().min(2),
 });
 
@@ -209,10 +213,15 @@ function Step0({ invisible, onClick }: EdgeStepProps) {
       )}
     >
       <div
-        className="relative h-24 w-full object-contain"
+        className="relative h-24 overflow-hidden w-24"
         // style={{ aspectRatio: logo.width / logo.height }}
       >
-        <Image src={logo} alt="Kazui logo" fill />
+        <Image
+          className=" object-contain rounded-full"
+          src={logo}
+          alt="Kazui logo"
+          fill
+        />
       </div>
       <h1 className="mt-2 text-2xl text-center font-semibold">
         Welcome to Kazui Portal

@@ -7,12 +7,16 @@ import {
   useState,
 } from "react";
 import { z } from "zod";
+import { useAppState } from "../wallet/app-state";
 import { socket } from "./socket";
+
+const MAX_TOP_HOLDERS = 7;
 
 type SocketState = {
   connected: boolean;
   newestAccounts: NewestAccounts | null;
   richest: Richest | null;
+  topHolders: TopHoldersData | null;
   reconnect: () => void;
 };
 
@@ -38,6 +42,18 @@ const richestSchema = z
   })
   .array();
 
+type TopHoldersData = {
+  address: string;
+  kazui: number;
+}[];
+
+const topHoldersDataSchema = z
+  .object({
+    address: z.string(),
+    kazui: z.number(),
+  })
+  .array();
+
 const Context = createContext<SocketState | null>(null);
 
 export function useSocketState() {
@@ -47,11 +63,17 @@ export function useSocketState() {
 }
 
 export default function SocketProvider({ children }: { children: ReactNode }) {
-  const [isConnected, setIsConnected] = useState(false);
+  const { credentials, wallet } = useAppState();
+  const kazui = wallet.kazui !== false ? wallet.kazui ?? null : 0;
+  const kazuiCalculated = kazui !== null ? Number(kazui) / 1e9 : null;
+  const [comparedLeaderboard, setComparedLeaderboard] = useState(false);
+
+  const [isConnected, setIsConnected] = useState(socket.connected);
   const [newestAccounts, setNewestAccounts] = useState<NewestAccounts | null>(
     null
   );
   const [richest, setRichest] = useState<Richest | null>(null);
+  const [topHolders, setTopHolders] = useState<TopHoldersData | null>(null);
 
   useEffect(() => {
     socket.connect();
@@ -66,6 +88,7 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
 
     function onDisconnect() {
       setIsConnected(false);
+      setComparedLeaderboard(false);
     }
 
     function onNewestAccounts(updatedData: any) {
@@ -80,19 +103,78 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
         setRichest(data);
       }
     }
+    function onTopHolders(updatedData: any) {
+      const { data, success } = topHoldersDataSchema.safeParse(updatedData);
+      console.log(data);
+      if (success) {
+        setTopHolders(data);
+      }
+    }
 
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("rts:newest-accounts", onNewestAccounts);
     socket.on("rts:richest", onRichest);
+    socket.on("rts:top-holders", onTopHolders);
 
     return () => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
       socket.off("rts:newest-accounts", onNewestAccounts);
       socket.off("rts:richest", onRichest);
+      socket.off("rts:top-holders", onTopHolders);
     };
   }, []);
+
+  useEffect(() => {
+    const readyToCompare =
+      isConnected &&
+      !comparedLeaderboard &&
+      topHolders &&
+      kazuiCalculated !== null;
+
+    if (readyToCompare) {
+      setComparedLeaderboard(true);
+
+      const inLeaderboard =
+        topHolders.findIndex(
+          (holder) => holder.address === credentials.address
+        ) !== -1;
+      if (topHolders.length < MAX_TOP_HOLDERS && !inLeaderboard) {
+        console.log("??");
+        // emit claim
+        socket.emit("rts:top-holders:claim-spot");
+        return;
+      }
+
+      let claim = false;
+      topHolders.forEach((holder) => {
+        const isUser = holder.address === credentials.address;
+
+        const userHasMore =
+          !isUser && !inLeaderboard && kazuiCalculated > holder.kazui;
+        if (userHasMore) {
+          claim = true;
+          return;
+        }
+
+        const myBalanceChanged = isUser && holder.kazui !== kazuiCalculated;
+        if (isUser && holder.kazui !== kazuiCalculated) {
+          claim = true;
+          return;
+        }
+      });
+
+      // emit claim
+      if (claim) socket.emit("rts:top-holders:claim-spot");
+    }
+  }, [
+    isConnected,
+    comparedLeaderboard,
+    kazuiCalculated,
+    topHolders,
+    credentials,
+  ]);
 
   const reconnect = () => {
     socket.disconnect();
@@ -101,7 +183,13 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
 
   return (
     <Context.Provider
-      value={{ connected: isConnected, newestAccounts, richest, reconnect }}
+      value={{
+        connected: isConnected,
+        newestAccounts,
+        richest,
+        topHolders,
+        reconnect,
+      }}
     >
       {children}
     </Context.Provider>

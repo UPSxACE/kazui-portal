@@ -33,14 +33,15 @@ export default function Richest() {
   });
 
   const error = accounts.findIndex((result) => result.isError) !== -1;
-  const isLoading = socketState.newestAccounts === null;
-  const ready = !error && !isLoading;
   const data = accounts.reduce<ProfileData[]>((acc, curr) => {
     if (curr.isSuccess) {
       acc.push(curr.data);
     }
     return acc;
   }, []);
+  const isLoading =
+    socketState.richest === null || socketState.richest.length !== data.length;
+  const ready = !error && !isLoading;
 
   return (
     <div className="w-full bg-background rounded-md overflow-hidden shrink-0">

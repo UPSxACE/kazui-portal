@@ -4,6 +4,7 @@ import {
   getAccount,
   getAssociatedTokenAddressSync,
   TOKEN_PROGRAM_ID,
+  TokenAccountNotFoundError,
 } from "@solana/spl-token";
 import { useConnection } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
@@ -35,8 +36,9 @@ export default function useGetKazuiBalance(ownerAddress?: string | null) {
         ataAddress,
         undefined,
         TOKEN_PROGRAM_ID
-      ).catch(() => {
-        return false;
+      ).catch((err) => {
+        if (err.name === TokenAccountNotFoundError.name) return false;
+        throw err;
       });
 
       return ata === false ? ata : ata.amount;

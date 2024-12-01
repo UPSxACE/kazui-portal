@@ -1,20 +1,49 @@
 "use client";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/_sui/avatar";
-import DotsContextButton from "@/components/ui/dots-context-button";
-import DynamicImage from "@/components/ui/dynamic-image";
 import api from "@/lib/api";
-import cuteDateSince from "@/lib/utils/cute-date-since";
 import { PostData, postDataSchema } from "@/schema/post-data";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { useEffect, useRef, useState } from "react";
-import { MdImageNotSupported } from "react-icons/md";
-import { twJoin } from "tailwind-merge";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useRef } from "react";
 import { z } from "zod";
-import Actions from "./_components/actions";
-import NewPost from "./new-post";
+import IndividualPost from "./_components/individual-post";
+import NewPost from "./_components/new-post";
+import Post from "./_components/post";
 
 export default function Posts() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const postId = (function () {
+    try {
+      const p = searchParams.get("p");
+      if (!p) return null;
+      return z.number().parse(Number.parseInt(p));
+    } catch {
+      return null;
+    }
+  })();
+
+  const createAddSearchParams = useCallback(
+    (paramValues: Record<string, string>) => {
+      const params = new URLSearchParams(searchParams.toString());
+      Object.keys(paramValues).forEach((key) => {
+        if (params.has(key)) params.delete(key, paramValues[key]);
+        params.set(key, paramValues[key]);
+      });
+      return params.toString();
+    },
+    [searchParams]
+  );
+  const createDeleteSearchParam = useCallback(
+    (paramKey: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete(paramKey);
+      return params.toString();
+    },
+    [searchParams]
+  );
+
   const {
     fetchNextPage,
     fetchPreviousPage,
@@ -104,6 +133,10 @@ export default function Posts() {
 
   const ready = !result.isPending;
 
+  if (typeof postId === "number") {
+    return <IndividualPost postId={postId} />;
+  }
+
   return (
     <main
       ref={parentRef}
@@ -181,68 +214,4 @@ export default function Posts() {
       </div>
     </main>
   );
-}
-
-function Post({ data }: { data: PostData }) {
-  const [ready, setReady] = useState(false);
-  return (
-    <article className="main-wrapper bg-background rounded-md">
-      <div className="main-inner-wrapper py-4 flex flex-col">
-        <header className="flex">
-          <Avatar className="w-10 h-10">
-            <AvatarImage src={data.owner.picture || undefined} />
-            <AvatarFallback>?</AvatarFallback>
-          </Avatar>
-          <div className="ml-2 flex flex-col justify-evenly w-full">
-            <div className="flex gap-1 items-end">
-              <span className="font-bold leading-none shrink-0">
-                {data.owner.nickname}
-              </span>
-              <span className="text-xs shrink leading-none text-zinc-400/70">
-                @{data.owner.username}
-              </span>
-            </div>
-            <span className="text-xs text-zinc-400/70 font-medium">
-              {cuteDateSince(new Date(data.created_at))}
-            </span>
-          </div>
-          <PostMenu />
-        </header>
-        {data?.images?.[0]?.path && (
-          <figure
-            className={twJoin(
-              "mt-2 overflow-hidden rounded-md",
-              !ready && "min-h-[500px]"
-            )}
-          >
-            <DynamicImage
-              onLoad={() => setReady(true)}
-              className="w-full max-h-[500px] object-contain bg-black"
-              src={data.images[0].path}
-              alt="meme"
-              fallback={
-                <div className="bg-zinc-200 aspect-square w-full flex justify-center items-center select-none text-7xl text-zinc-400/70">
-                  <MdImageNotSupported />
-                </div>
-              }
-            />
-          </figure>
-        )}
-        <Actions likes={data.likes_count} comments={data.comments_count} />
-        <div className="mt-[0.35rem]">
-          <span className="font-bold text-sm leading-none">
-            {data.owner.nickname}
-          </span>
-          <span className="text-sm leading-4 ml-1">{data.text}</span>
-        </div>
-        <div className="mt-[0.35rem] text-[0.75rem] text-zinc-400/70">
-          <span>View all comments</span>
-        </div>
-      </div>
-    </article>
-  );
-}
-
-function PostMenu() {
-  return <DotsContextButton className="ml-auto" />;
 }

@@ -1,6 +1,5 @@
 "use client";
 import logo from "@/../public/kazui-coin.svg";
-import Image from "next/image";
 import {
   Sheet,
   SheetContent,
@@ -9,6 +8,8 @@ import {
   SheetTrigger,
 } from "@/components/_sui/sheet";
 import HamburgerMenu from "@/components/layout/_components/hamburger-button";
+import Image from "next/image";
+import Account from "./account";
 
 export default function MobileMenu() {
   return (
@@ -19,15 +20,16 @@ export default function MobileMenu() {
         </SheetTrigger>
         <SheetContent side={"top"} className="bg-background-lighter">
           <SheetHeader>
-            <div
+            {/* <div
               className="relative h-10"
               style={{ aspectRatio: logo.width / logo.height }}
             >
               <Image src={logo} alt="Kazui logo" fill />
-            </div>
+            </div> */}
             <SheetDescription>
-              This action cannot be undone. This will permanently delete your
-              account and remove your data from our servers.
+              <Account mobile />
+              {/* This action cannot be undone. This will permanently delete your
+              account and remove your data from our servers. */}
             </SheetDescription>
           </SheetHeader>
         </SheetContent>

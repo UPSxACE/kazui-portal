@@ -78,7 +78,8 @@ export default function NewPost() {
     await api
       .post("/post", post)
       .then(() => {
-        setModalOpen(false);
+        // setModalOpen(false);
+        window.location.reload();
       })
       .catch((e) => {
         console.log(e);
