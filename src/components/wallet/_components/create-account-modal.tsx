@@ -224,7 +224,7 @@ function Step0({ invisible, onClick }: EdgeStepProps) {
         />
       </div>
       <h1 className="mt-2 text-2xl text-center font-semibold">
-        Welcome to Kazui Portal
+        Welcome to Legyon
       </h1>
       <p className="mt-1 text-zinc-400 text-center">
         {
