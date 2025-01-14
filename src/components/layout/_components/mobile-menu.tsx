@@ -5,6 +5,7 @@ import {
   SheetContent,
   SheetDescription,
   SheetHeader,
+  SheetTitle,
   SheetTrigger,
 } from "@/components/_sui/sheet";
 import HamburgerMenu from "@/components/layout/_components/hamburger-button";
@@ -20,6 +21,7 @@ export default function MobileMenu() {
         </SheetTrigger>
         <SheetContent side={"top"} className="bg-background-lighter">
           <SheetHeader>
+            <SheetTitle className="hidden">Connect Wallet</SheetTitle>
             {/* <div
               className="relative h-10"
               style={{ aspectRatio: logo.width / logo.height }}

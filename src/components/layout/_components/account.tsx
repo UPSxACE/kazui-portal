@@ -173,6 +173,10 @@ function WalletDialog({
     };
   };
 
+  const ua = navigator.userAgent.toLowerCase();
+  const isAndroid = ua.includes("android");
+  const walletsFiltered = isAndroid ? wallets.slice(0, 1) : wallets;
+
   return (
     <Dialog open={open}>
       <DialogContent
@@ -183,7 +187,7 @@ function WalletDialog({
           className="text-center text-2xl"
           wrapperClassName={twJoin(
             "p-8 pt-11 pb-5 flex justify-center items-center",
-            wallets.length === 0 && "hidden"
+            walletsFiltered.length === 0 && "hidden"
           )}
           closeClassName="absolute top-4 right-4 p-2 bg-background-light rounded-full"
           onClose={() => setOpen(false)}
@@ -192,12 +196,12 @@ function WalletDialog({
           Solana to continue
         </DialogTitle>
         <DialogDescription className="flex flex-col gap-2">
-          {wallets.length === 0 && (
+          {walletsFiltered.length === 0 && (
             <span className="text-center w-full block pt-1 pb-3 text-xl">
               No wallet extension detected.
             </span>
           )}
-          {wallets.map((wallet) => (
+          {walletsFiltered.map((wallet) => (
             <button
               key={wallet.adapter.name}
               onClick={connectToWallet(wallet.adapter.name)}

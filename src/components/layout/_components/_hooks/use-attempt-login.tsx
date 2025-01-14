@@ -10,6 +10,7 @@ import { z } from "zod";
 
 export default function useAttemptLogin() {
   const [attempting, setAttempting] = useState<WalletName | false>(false);
+  const [askedWallet, setAskedWallet] = useState(false);
   const {
     wallet,
     wallets,
@@ -34,13 +35,14 @@ export default function useAttemptLogin() {
     if (!attempting) {
       return;
     }
-    if (!connected && !connecting && !disconnecting) {
+    if (!connected && !connecting && !disconnecting && !askedWallet) {
       // select
       if (adapterName === attempting) {
         // FIXME: add warning to connection to phantom; problems in connection, specially after changing wallet = reload page
         // NOTE: I solved a problem with connecting with wrong accounts(they would auto-connect with the wrong ones) with DisconnectResolution in solana-provider.tsx
         //       The fix did work with Solflare, but not with Phantom! H
         connect();
+        setAskedWallet(true);
         return;
       } else {
         return select(attempting);
@@ -83,6 +85,7 @@ export default function useAttemptLogin() {
         setAddress(publicKey.toString());
         setAttempting(false);
         reconnect();
+        setAskedWallet(false);
       }
     }
 
@@ -100,6 +103,9 @@ export default function useAttemptLogin() {
     signMessage,
     adapterName,
     setAddress,
+    loggedIn,
+    reconnect,
+    askedWallet,
   ]);
 
   useEffect(() => {

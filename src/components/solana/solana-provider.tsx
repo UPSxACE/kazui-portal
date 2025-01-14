@@ -7,6 +7,7 @@ import {
   WalletProvider,
 } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
+import { SolflareWalletAdapter } from "@solana/wallet-adapter-solflare";
 import dynamic from "next/dynamic";
 import {
   Dispatch,
@@ -14,6 +15,7 @@ import {
   SetStateAction,
   useCallback,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 
@@ -43,11 +45,11 @@ export function SolanaProvider({
   }, []);
 
   const autoconnectResolved = autoconnect && disconnected !== true;
-
+  const wallets = useMemo(() => [new SolflareWalletAdapter()], []);
   return (
     <ConnectionProvider endpoint={endpoint}>
       <WalletProvider
-        wallets={[]}
+        wallets={wallets}
         onError={onError}
         autoConnect={autoconnectResolved}
       >
@@ -79,7 +81,7 @@ function DisconnectResolution({
     if (disconnected !== _disconnected) {
       setDisconnected(_disconnected);
     }
-  }, [_disconnected]);
+  }, [_disconnected, disconnected, setDisconnected]);
 
   return children;
 }
